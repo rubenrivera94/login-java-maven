@@ -1,0 +1,46 @@
+
+
+pipeline {
+    agent any
+
+    tools {
+        jdk 'JDK11' // Cambia aquí a JDK17
+        maven "Maven_Home" // Asegúrate de que "Maven_Home" esté configurado en Jenkins.
+    }
+
+    stages {
+        stage('Stage 1 - Checkout Code') {
+            steps {
+                git branch: 'main', url: 'https://github.com/rubenrivera94/login-java-maven'
+            }
+        }
+        stage('Stage 2 - Compile Code') {
+            steps {
+                // Comando para compilar el código en Windows
+                bat "mvn clean compile"
+            }
+        }
+        stage('Stage 3 - Run Unit Tests') {
+            steps {
+                // Comando para ejecutar las pruebas unitarias
+                bat "mvn test"
+            }
+        }
+        stage('Stage 4 - Create Build') {
+            steps {
+                // Comando para empaquetar el proyecto
+                bat "mvn package"
+            }
+        }
+    }
+
+    post {
+        failure {
+            // Acción a ejecutar en caso de falla (ejemplo: envío de correo)
+            echo "Email sent for Jenkins build failure"
+        }
+        success {
+            echo "Pipeline completed successfully"
+        }
+    }
+}
